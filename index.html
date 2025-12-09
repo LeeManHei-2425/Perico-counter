@@ -1,193 +1,290 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-TW">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="apple-touch-icon" sizes="60x60" href="./apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
-  <link rel="manifest" href="./site.webmanifest">
-  <link rel="mask-icon" href="./safari-pinned-tab.svg" color="#5bbad5">
-  <meta name="msapplication-TileColor" content="#da532c">
-  <meta name="theme-color" content="#ffffff">
-  <title>Cayo Perico Heist Loot Value Counter</title>
-  <link rel="stylesheet" href="css/style.css?nocache=1009" />
-
+  <title>Cayo Perico 搶劫計算機</title>
+  <link rel="stylesheet" href="css/style.css?nocache=1013" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  
   <script>
-    const nocache = 1010;
+    const nocache = 1013;
   </script>
 </head>
 
 <body>
-  <div class="credentials">
-    <h3>Created by: <a href="https://github.com/MichalD96" target="_blank">Michal__d</a></h3>
-    <h5>Site build in progress ;)</h5>
-    <h5>Report all issues <a target="_blank" href="https://github.com/MichalD96/Perico-heist-goods-counter/issues/">Here (GitHub)</a></h5>
-    <h5>Support the project <a target="_blank" href="https://www.paypal.com/paypalme/Michald96">Here (PayPal)</a></h5>
-  </div>
-  <div class="flex">
+  <div class="app-container">
+    
+    <div class="input-section">
+      <header>
+        <h1><i class="fas fa-terminal"></i> Cayo Perico 計算機</h1>
+        <p class="subtitle">佩里克島搶劫戰利品計算 | UI Updated</p>
+      </header>
 
-    <div class="main-container">
-      <div class="custom-input">
-        <label for="isHardMode">Hard mode:</label>
-        <select class="input-text" id="isHardMode">
-          <option value="false">No</option>
-          <option value="true">Yes</option>
-        </select>
-      </div>
+      <section class="panel settings-panel">
+        <h2><i class="fas fa-cog"></i> 任務設定</h2>
+        <div class="settings-grid">
+          <div class="setting-item">
+            <label>難度模式</label>
+            <select id="isHardMode">
+              <option value="false">普通</option>
+              <option value="true">困難</option>
+            </select>
+          </div>
+          <div class="setting-item">
+            <label>玩家人數</label>
+            <select id="amountOfPlayers">
+              <option value="1">1 人 (單刷)</option>
+              <option value="2" selected>2 人</option>
+              <option value="3">3 人</option>
+              <option value="4">4 人</option>
+            </select>
+          </div>
+          <div class="setting-item">
+            <label>精英挑戰獎勵</label>
+            <select id="isWithinCooldown">
+              <option value="false">無 (超過 72h)</option>
+              <option value="true">有 (72h 內)</option>
+            </select>
+          </div>
+          <div class="setting-item">
+            <label for="goldAlone">單人拿黃金 (Glitch)?</label>
+            <select id="goldAlone">
+              <option value="false">否</option>
+              <option value="true">是</option>
+            </select>
+          </div>
+        </div>
+      </section>
 
-      <div class="custom-input">
-        <label for="isWithinCooldown">Within 72h bonus:</label>
-        <select class="input-text" id="isWithinCooldown">
-          <option value="false">No</option>
-          <option value="true">Yes</option>
-        </select>
-      </div>
-
-      <div class="custom-input">
-        <label for="primaryTarget">Main Target:</label>
-        <select class="input-text" id="primaryTarget">
+      <section class="panel primary-panel">
+        <h2><i class="fas fa-gem"></i> 主要目標</h2>
+        <select id="primaryTarget" style="display:none">
           <option value="tequila">Tequila</option>
           <option value="ruby_necklace">Ruby Necklace</option>
           <option value="bearer_bonds">Bearer Bonds</option>
           <option value="pink_diamond" selected>Pink Diamond</option>
           <option value="panther_statue">Panther Statue</option>
         </select>
-      </div>
 
-      <div class="custom-input">
-        <label for="amountOfPlayers">Amount of players:</label>
-        <select class="input-text" id="amountOfPlayers">
-          <option value="1">1</option>
-          <option value="2" selected>2</option>
-          <option value="3">3</option>
-          <option value="4">4</option>
-        </select>
-      </div>
+        <div class="primary-grid">
+          <div class="primary-card" onclick="selectPrimary('tequila', this)">
+            <div class="p-card-image">
+              <img src="assets/tequila.png" alt="龍舌蘭" onerror="this.style.display='none'">
+              <i class="fas fa-wine-bottle fallback-icon"></i>
+            </div>
+            <span class="p-card-title">龍舌蘭</span>
+          </div>
 
-      <div class="custom-input">
-        <label class="darken" for="goldAlone">Collect gold alone?</label>
-        <select class="input-text" id="goldAlone">
-          <option value="false">No</option>
-          <option value="true">Yes</option>
-        </select>
-      </div>
+          <div class="primary-card" onclick="selectPrimary('ruby_necklace', this)">
+            <div class="p-card-image">
+              <img src="assets/necklace.png" alt="紅寶石項鍊" onerror="this.style.display='none'">
+              <i class="fas fa-ring fallback-icon"></i>
+            </div>
+            <span class="p-card-title">紅寶石項鍊</span>
+          </div>
 
-      <div class="custom-input">
-        <label for="gold">Gold stacks:</label>
-        <input type="number" id="gold" name="gold" value="1" min="0" max="6">
-      </div>
+          <div class="primary-card" onclick="selectPrimary('bearer_bonds', this)">
+            <div class="p-card-image">
+              <img src="assets/bonds.png" alt="無記名債券" onerror="this.style.display='none'">
+              <i class="fas fa-file-invoice-dollar fallback-icon"></i>
+            </div>
+            <span class="p-card-title">無記名債券</span>
+          </div>
 
-      <div class="custom-input">
-        <label for="cocaine">Cocaine stacks:</label>
-        <input type="number" id="cocaine" name="cocaine" value="1" min="0" max="12">
-      </div>
+          <div class="primary-card active" onclick="selectPrimary('pink_diamond', this)" id="default-primary">
+            <div class="p-card-image">
+              <img src="assets/diamond.png" alt="粉鑽" onerror="this.style.display='none'">
+              <i class="far fa-gem fallback-icon"></i>
+            </div>
+            <span class="p-card-title">粉鑽</span>
+          </div>
 
-      <div class="custom-input">
-        <label for="weed">Weed stacks:</label>
-        <input type="number" id="weed" name="weed" value="1" min="0" max="12">
-      </div>
-
-      <div class="custom-input">
-        <label for="paintings">Paintings:</label>
-        <input type="number" id="paintings" name="paintings" value="1" min="0" max="5">
-      </div>
-
-      <div class="custom-input">
-        <label for="cash">Cash stacks:</label>
-        <input type="number" id="cash" name="cash" value="1" min="0" max="15">
-      </div>
-      <h4>Secondary targets average values:</h4>
-      <div class="stacks-values">
-        <div class="targets-names">
-          <div>Target:</div>
-          <div class="dimmed">Gold:</div>
-          <div class="dimmed">Cocaine:</div>
-          <div class="dimmed">Weed:</div>
-          <div class="dimmed">Painting:</div>
-          <div class="dimmed">Cash:</div>
+          <div class="primary-card" onclick="selectPrimary('panther_statue', this)">
+            <div class="p-card-image">
+              <img src="assets/panther.png" alt="美洲豹雕像" onerror="this.style.display='none'">
+              <i class="fas fa-cat fallback-icon"></i>
+            </div>
+            <span class="p-card-title">美洲豹雕像</span>
+          </div>
         </div>
-        <div class="targets-stacks">
-          <div>Stack value:</div>
-          <div class="dimmed" id="gold-stacks-value"></div>
-          <div class="dimmed" id="cocaine-stacks-value"></div>
-          <div class="dimmed" id="weed-stacks-value"></div>
-          <div class="dimmed" id="paintings-stacks-value"></div>
-          <div class="dimmed" id="cash-stacks-value"></div>
+      </section>
+
+      <section class="panel loot-panel">
+        <h2><i class="fas fa-sack-dollar"></i> 島上偵察到的次要目標 (數量)</h2>
+        <div class="loot-grid">
+          
+          <div class="loot-card gold">
+            <div class="card-image">
+              <img src="assets/gold_bar.png" alt="黃金" onerror="this.style.display='none'">
+              <span class="card-title">黃金</span>
+            </div>
+            <div class="counter-control">
+              <button class="btn-minus" onclick="updateInput('gold', -1)">-</button>
+              <input type="number" id="gold" value="1" min="0" max="6" readonly>
+              <button class="btn-plus" onclick="updateInput('gold', 1)">+</button>
+            </div>
+          </div>
+
+          <div class="loot-card cocaine">
+            <div class="card-image">
+              <img src="assets/cocaine.png" alt="古柯鹼" onerror="this.style.display='none'">
+              <span class="card-title">古柯鹼</span>
+            </div>
+            <div class="counter-control">
+              <button class="btn-minus" onclick="updateInput('cocaine', -1)">-</button>
+              <input type="number" id="cocaine" value="1" min="0" max="12" readonly>
+              <button class="btn-plus" onclick="updateInput('cocaine', 1)">+</button>
+            </div>
+          </div>
+
+          <div class="loot-card weed">
+            <div class="card-image">
+              <img src="assets/weed.png" alt="大麻" onerror="this.style.display='none'">
+              <span class="card-title">大麻</span>
+            </div>
+            <div class="counter-control">
+              <button class="btn-minus" onclick="updateInput('weed', -1)">-</button>
+              <input type="number" id="weed" value="1" min="0" max="12" readonly>
+              <button class="btn-plus" onclick="updateInput('weed', 1)">+</button>
+            </div>
+          </div>
+
+          <div class="loot-card paintings">
+            <div class="card-image">
+              <img src="assets/painting.png" alt="畫作" onerror="this.style.display='none'">
+              <span class="card-title">畫作</span>
+            </div>
+            <div class="counter-control">
+              <button class="btn-minus" onclick="updateInput('paintings', -1)">-</button>
+              <input type="number" id="paintings" value="1" min="0" max="5" readonly>
+              <button class="btn-plus" onclick="updateInput('paintings', 1)">+</button>
+            </div>
+          </div>
+
+          <div class="loot-card cash">
+            <div class="card-image">
+              <img src="assets/cash.png" alt="現金" onerror="this.style.display='none'">
+              <span class="card-title">現金</span>
+            </div>
+            <div class="counter-control">
+              <button class="btn-minus" onclick="updateInput('cash', -1)">-</button>
+              <input type="number" id="cash" value="1" min="0" max="15" readonly>
+              <button class="btn-plus" onclick="updateInput('cash', 1)">+</button>
+            </div>
+          </div>
+
         </div>
-        <div class="targets-bags">
-          <div>Full bag:</div>
-          <div class="dimmed" id="gold-bags-value"></div>
-          <div class="dimmed" id="cocaine-bags-value"></div>
-          <div class="dimmed" id="weed-bags-value"></div>
-          <div class="dimmed" id="paintings-bags-value"></div>
-          <div class="dimmed" id="cash-bags-value"></div>
-        </div>
-        <div class="targets-bags">
-          <div>Bag fill %:</div>
-          <div class="dimmed" id="gold-bag-percent"></div>
-          <div class="dimmed" id="cocaine-bag-percent"></div>
-          <div class="dimmed" id="weed-bag-percent"></div>
-          <div class="dimmed" id="paintings-bag-percent"></div>
-          <div class="dimmed" id="cash-bag-percent"></div>
-        </div>
-      </div>
+      </section>
     </div>
 
-    <div class="main-container right">
-      <div class="dimmed">+ Office safe: <span id="office-safe"></span></div>
-      <div class="dimmed">- Fencing fee (10%): <span id="fencing-fee"></span></div>
-      <div class="dimmed">- Pavel fee (2%): <span id="pavel-fee"></span></div>
-      <div class="dimmed">+ Elite Challenge: <span id="elite-challenge"></span> for every player*</div>
-      <div class="cuts">
-        <div class="custom-input-narrow">
-          <label contenteditable="true" for="leader">Leader</label>
-          <input type="number" id="leaderCut" value="85" min="15" max="100" step="5">
-          <span></span>
+    <div class="result-section">
+      <div class="sticky-wrapper">
+        <div class="result-card main-profit">
+          <h3>預估最高收益</h3>
+          <div id="max-loot-value" class="highlight-value">0</div>
+          <div class="bag-status">
+            <span>背包容量: <span id="bags_fill">0</span> / <span id="max_bags_display">2</span></span>
+            <div class="progress-bar-bg"><div class="progress-bar-fill" id="bag-bar" style="width: 0%"></div></div>
+          </div>
         </div>
-        <div class="custom-input-narrow">
-          <label contenteditable="true" for="member1">Member 1</label>
-          <input type="number" id="member1Cut" value="15" min="15" max="85" step="5">
-          <span></span>
+
+        <div class="result-card details">
+          <h4><i class="fas fa-calculator"></i> 收支明細</h4>
+          <div class="detail-row"><span>辦公室保險箱:</span> <span id="office-safe">0</span></div>
+          <div class="detail-row"><span>精英挑戰:</span> <span id="elite-challenge">0</span></div>
+          <div class="detail-row minus"><span>洗錢費用 (10%):</span> <span id="fencing-fee">0</span></div>
+          <div class="detail-row minus"><span>帕維爾 (2%):</span> <span id="pavel-fee">0</span></div>
         </div>
-        <div class="custom-input-narrow">
-          <label contenteditable="true" for="member2">Member 2</label>
-          <input type="number" id="member2Cut" value="15" min="15" max="70" step="5">
-          <span></span>
+
+        <div class="result-card player-cuts">
+          <h4><i class="fas fa-users"></i> 玩家分紅</h4>
+          <div class="cuts">
+            <div class="cut-row">
+              <label>隊長</label>
+              <input type="number" id="leaderCut" value="85" step="5">
+              <span></span>
+            </div>
+            <div class="cut-row">
+              <label>隊員 1</label>
+              <input type="number" id="member1Cut" value="15" step="5">
+              <span></span>
+            </div>
+             <div class="cut-row hidden" id="cut-p3-wrapper">
+              <label>隊員 2</label>
+              <input type="number" id="member2Cut" value="15" step="5">
+              <span></span>
+            </div>
+             <div class="cut-row hidden" id="cut-p4-wrapper">
+              <label>隊員 3</label>
+              <input type="number" id="member3Cut" value="15" step="5">
+              <span></span>
+            </div>
+          </div>
         </div>
-        <div class="custom-input-narrow">
-          <label contenteditable="true" for="member3">Member 3</label>
-          <input type="number" id="member3Cut" value="15" min="15" max="55" step="5">
-          <span></span>
+
+        <div class="hidden-logic-elements" style="display:none;">
+           <div id="gold-stacks-value"></div><div id="gold-bags-value"></div><div id="gold-bag-percent"></div>
+           <div id="cocaine-stacks-value"></div><div id="cocaine-bags-value"></div><div id="cocaine-bag-percent"></div>
+           <div id="weed-stacks-value"></div><div id="weed-bags-value"></div><div id="weed-bag-percent"></div>
+           <div id="paintings-stacks-value"></div><div id="paintings-bags-value"></div><div id="paintings-bag-percent"></div>
+           <div id="cash-stacks-value"></div><div id="cash-bags-value"></div><div id="cash-bag-percent"></div>
+           <div class="big" id="gold-bag"></div>
+           <div class="big" id="cocaine-bag"></div>
+           <div class="big" id="weed-bag"></div>
+           <div class="big" id="paintings-bag"></div>
+           <div class="big" id="cash-bag"></div>
         </div>
-      </div>
-      <hr>
-      <div>Max possible profit: <span id="max-loot-value"></span></div>
-      <hr>
-      <p>You can take (in profit order):</p>
-      <div class="hidden"><span class="big" id="gold-bag">0</span></div>
-      <div class="hidden"><span class="big" id="cocaine-bag">0</span></div>
-      <div class="hidden"><span class="big" id="weed-bag">0</span></div>
-      <div class="hidden"><span class="big" id="paintings-bag">0</span></div>
-      <div class="hidden"><span class="big" id="cash-bag">0</span></div>
-      <br>
-      <hr>
-      <div>Bags sum: <span id="bags_fill"></span>**</div>
-      <div class="flex-buttons">
-        <button id="reset-settings" class="button">Reset settings to default</button>
-        <button id="link-settings" class="button">Copy link with settings</button>
-      </div>
-      <div class="properties">
-        <p>* - not included to current final value</p>
-        <p>** - value over amount of players is not a bug, in some specific cases you can pick up more than your bags capacity</p>
+        
+        <div class="action-buttons">
+          <button id="reset-settings" class="btn-secondary">重置設定</button>
+          <button id="link-settings" class="btn-secondary">複製連結</button>
+        </div>
       </div>
     </div>
   </div>
 
-  <script src="js/loader.js?nocache=1009"></script>
-  <script src="js/settings.js?nocache=1009"></script>
-  <script src="js/logic.js?nocache=1009"></script>
-</body>
+  <script>
+    // 輔助函式：按鈕驅動輸入框更新
+    function updateInput(id, change) {
+      const input = document.getElementById(id);
+      let newVal = parseInt(input.value) + change;
+      if (newVal >= input.min && newVal <= input.max) {
+        input.value = newVal;
+        input.dispatchEvent(new Event('change'));
+      }
+    }
 
+    // 處理主要目標卡片點擊
+    function selectPrimary(value, element) {
+      // 1. 更新隱藏的 select 值，讓 logic.js 抓到
+      const select = document.getElementById('primaryTarget');
+      select.value = value;
+      select.dispatchEvent(new Event('change'));
+
+      // 2. 更新視覺上的卡片選中狀態
+      document.querySelectorAll('.primary-card').forEach(card => card.classList.remove('active'));
+      element.classList.add('active');
+    }
+
+    // 初始化視覺狀態
+    window.addEventListener('DOMContentLoaded', () => {
+        // 同步 logic.js 可能載入的預設值到視覺卡片
+        setTimeout(() => {
+          const currentVal = document.getElementById('primaryTarget').value;
+          document.querySelectorAll('.primary-card').forEach(card => {
+            if(card.getAttribute('onclick').includes(currentVal)) {
+               card.classList.add('active');
+            } else {
+               card.classList.remove('active');
+            }
+          });
+        }, 100); 
+    });
+  </script>
+  <script src="js/loader.js?nocache=1013"></script>
+  <script src="js/settings.js?nocache=1013"></script>
+  <script src="js/logic.js?nocache=1013"></script>
+</body>
 </html>
