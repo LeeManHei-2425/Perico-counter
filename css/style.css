@@ -164,17 +164,6 @@ input.error-input { border-color: var(--danger) !important; background-color: rg
   display: block;
 }
 
-.fallback-icon {
-    font-size: 2.5rem;
-    color: #444;
-    display: none;
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-}
-.p-card-image img[style*="display: none"] + .fallback-icon,
-.p-card-image img[style*="display:none"] + .fallback-icon { display: block; }
-
 .p-card-title { font-size: 0.85rem; color: #ccc; }
 
 /* --- 優化按鈕與次要目標 --- */

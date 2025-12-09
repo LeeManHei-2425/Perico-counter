@@ -59,7 +59,6 @@ const Counter = {
       const targets = Counter.targetsData.targets.secondary;
       
       // 優先級排序：黃金 > 古柯鹼 > 大麻 > 畫作 > 現金
-      // *注意：實際遊戲中畫作有時不如大麻，但為了簡化計算，這裡沿用經典優先級
       const priority = ['gold', 'cocaine', 'weed', 'paintings', 'cash'];
 
       priority.forEach(type => {
@@ -116,10 +115,13 @@ const Counter = {
     const withinCooldownSecondaryBonus = Settings.isWithinCooldown ?
       Counter.targetsData.targets.primary.find(({ name }) => name === Settings.primaryTarget).bonus_multiplier : 1;
 
-    // 分紅警告
-    const totalCut = Settings.leaderCut + Settings.member1Cut + 
+    // 分紅警告計算 (修正：如果只有1人，不計算其他人的分紅)
+    // 這裡確保如果 UI 隱藏了隊員，計算時也不會加進去
+    const totalCut = Settings.leaderCut + 
+                    (players > 1 ? Settings.member1Cut : 0) + 
                     (players > 2 ? Settings.member2Cut : 0) + 
                     (players > 3 ? Settings.member3Cut : 0);
+
     const warningEl = document.getElementById('cut-warning');
     const cutInputs = document.querySelectorAll('.cuts input');
     
@@ -140,40 +142,25 @@ const Counter = {
       if (name === 'paintings') amountTaken = Math.floor(amountTaken);
 
       const weight = obj.weight;
-      // realFill 代表佔用的背包容量
       const realFill = amountTaken * weight;
       
-      if (realFill > 0.001) { // 避免浮點數誤差顯示 0
+      if (realFill > 0.001) { 
         bagsFill += realFill;
         
-        // --- 核心：恢復 Clicks 計算邏輯 ---
         let clickText = '';
         if (name === 'paintings') {
             clickText = `${amountTaken} 幅`;
         } else {
-            // 計算剩餘的比例 (小數點部分)
             const fullStacks = Math.floor(amountTaken);
             const partialStack = amountTaken - fullStacks;
             
-            // 每個全堆的點擊數 = pickup_steps 的長度 (通常是 7 或 10)
             const clicksPerStack = obj.pickup_steps.length;
             let totalClicks = fullStacks * clicksPerStack;
 
-            // 計算半堆的點擊數
             if (partialStack > 0.001) {
-                // 將比例轉換為百分比 (例如 0.5 stack -> 50% 滿 -> 找 pickup_steps 裡的對應點擊)
-                // pickup_steps 是一個陣列，例如 [10, 20, 30... 100]
-                // 我們要找最接近 partialStack * 100 的 step 是第幾個
                 const percent = partialStack * 100;
                 const stepIndex = findClosestValue(percent, obj.pickup_steps);
-                // stepIndex 是 1-based，所以直接加
                 totalClicks += stepIndex;
-            }
-            
-            // 特殊規則修正 (根據原本邏輯)
-            if (totalClicks % 10 !== 0 && (['cocaine', 'cash'].includes(obj.name) || (obj.name === 'weed' && players > 1))) {
-                 // 某些情況下微調
-                 // totalClicks += 1; // 視需求開啟，先保持簡單
             }
             
             clickText = `${rounding(amountTaken)} 堆 (${totalClicks} 次)`;
@@ -209,7 +196,8 @@ const Counter = {
 
     const inputs = document.querySelectorAll('.cuts input');
     [...inputs].forEach(element => {
-      if (!element.classList.contains('error-input')) {
+      // 簡單的顯示更新，錯誤狀態由 CSS 處理
+      if (!element.classList.contains('error-input') || element.value <= 100) {
           element.nextElementSibling.innerText = Math.round(finalProfit * element.value / 100).toLocaleString();
       } else {
           element.nextElementSibling.innerText = "Error";
@@ -235,8 +223,8 @@ const Counter = {
         takenContainer.classList.add('hidden');
     }
 
-    // 更新背包條與最大容量
-    const maxCapacity = Settings.amountOfPlayers; // 修正點：從 Settings 獲取當前人數
+    // 更新背包條
+    const maxCapacity = Settings.amountOfPlayers;
     document.querySelector('#max_bags_display').innerText = maxCapacity;
     document.querySelector('#bags_fill').innerText = bagsFill.toFixed(2);
     
@@ -244,7 +232,7 @@ const Counter = {
     const bar = document.querySelector('#bag-bar');
     bar.style.width = `${Math.min(percent, 100)}%`;
     
-    if (percent > 100.1) bar.style.backgroundColor = '#ff5252'; // 允許一點點誤差
+    if (percent > 100.1) bar.style.backgroundColor = '#ff5252';
     else if (percent > 95) bar.style.backgroundColor = '#00e676';
     else bar.style.backgroundColor = '#2979ff';
   },
@@ -269,7 +257,6 @@ const Counter = {
     Object.values(htmlElements).forEach(element => {
       if(element) {
           element.addEventListener('change', event => {
-            // 手動調整時，視為直接修改 Taken 數量 (相容舊邏輯)
             Settings[event.currentTarget.id] = +event.target.value;
             Counter.getLoot();
           });
@@ -281,8 +268,13 @@ const Counter = {
            Settings[t] = 0;
            document.getElementById(t).value = 0;
        });
-       Settings.leaderCut = 85; document.getElementById('leaderCut').value = 85;
-       Settings.member1Cut = 15; document.getElementById('member1Cut').value = 15;
+       // 重置時，如果現在是多人，回復 85/15；如果是單人，設為 100
+       if (Settings.amountOfPlayers === 1) {
+           Settings.leaderCut = 100; document.getElementById('leaderCut').value = 100;
+       } else {
+           Settings.leaderCut = 85; document.getElementById('leaderCut').value = 85;
+           Settings.member1Cut = 15; document.getElementById('member1Cut').value = 15;
+       }
        Counter.getLoot();
     });
 
@@ -292,12 +284,26 @@ const Counter = {
 
     SettingProxy.addListener(Settings, 'gold weed cash cocaine paintings primaryTarget isHardMode isWithinCooldown goldAlone leaderCut member1Cut member2Cut member3Cut amountOfPlayers', Counter.getLoot);
     
-    // 監聽玩家人數改變，更新 UI
+    // 監聽玩家人數改變，動態隱藏/顯示分紅欄位
     SettingProxy.addListener(Settings, 'amountOfPlayers', () => {
       document.querySelector('#goldAlone').parentElement.classList.toggle('hidden', Settings.amountOfPlayers !== 1);
-      const inputs = document.querySelectorAll('.cuts .cut-row');
-      if(inputs[2]) inputs[2].classList.toggle('hidden', Settings.amountOfPlayers < 3);
-      if(inputs[3]) inputs[3].classList.toggle('hidden', Settings.amountOfPlayers < 4);
+      
+      const rows = document.querySelectorAll('.cuts .cut-row');
+      // 這裡對應 index.html 結構: 
+      // rows[0]=Leader, rows[1]=Member1, rows[2]=Member2, rows[3]=Member3
+      
+      // 當人數 < 2 (即 1人) 時，隱藏 Member 1 (rows[1])
+      if(rows[1]) rows[1].classList.toggle('hidden', Settings.amountOfPlayers < 2);
+      if(rows[2]) rows[2].classList.toggle('hidden', Settings.amountOfPlayers < 3);
+      if(rows[3]) rows[3].classList.toggle('hidden', Settings.amountOfPlayers < 4);
+
+      // 單人時自動將隊長設為 100%
+      if (Settings.amountOfPlayers === 1) {
+          Settings.leaderCut = 100;
+          const leaderInput = document.getElementById('leaderCut');
+          if(leaderInput) leaderInput.value = 100;
+      }
+
       Counter.getLoot();
     })();
   },
@@ -325,7 +331,6 @@ function getAverage(...args) {
 
 function findClosestValue(value, array) {
   if (value === 0) return 0;
-  // 找陣列中最接近的 index (return index + 1 因為是 steps 次數)
   return array
     .map(element => Math.abs(value - element))
     .reduce((acc, el, index, arr) => el < arr[acc] ? index : acc, 0) + 1;

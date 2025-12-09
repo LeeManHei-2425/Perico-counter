@@ -5,11 +5,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cayo Perico 搶劫計算機</title>
-  <link rel="stylesheet" href="css/style.css?nocache=1015" />
+  <link rel="stylesheet" href="css/style.css?nocache=1016" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   
   <script>
-    const nocache = 1015;
+    const nocache = 1016;
   </script>
 </head>
 
@@ -19,7 +19,7 @@
     <div class="input-section">
       <header>
         <h1><i class="fas fa-terminal"></i> Cayo Perico 計算機</h1>
-        <p class="subtitle">佩里克島搶劫戰利品計算 | v2.1 Fix</p>
+        <p class="subtitle">佩里克島搶劫戰利品計算 | v2.2 Clean UI</p>
       </header>
 
       <section class="panel settings-panel slide-in">
@@ -72,7 +72,6 @@
           <div class="primary-card" onclick="selectPrimary('tequila', this)">
             <div class="p-card-image">
               <img src="assets/tequila.png" alt="龍舌蘭" onerror="this.style.display='none'">
-              <i class="fas fa-wine-bottle fallback-icon"></i>
             </div>
             <span class="p-card-title">龍舌蘭</span>
           </div>
@@ -80,7 +79,6 @@
           <div class="primary-card" onclick="selectPrimary('ruby_necklace', this)">
             <div class="p-card-image">
               <img src="assets/necklace.png" alt="紅寶石項鍊" onerror="this.style.display='none'">
-              <i class="fas fa-ring fallback-icon"></i>
             </div>
             <span class="p-card-title">紅寶石項鍊</span>
           </div>
@@ -88,7 +86,6 @@
           <div class="primary-card" onclick="selectPrimary('bearer_bonds', this)">
             <div class="p-card-image">
               <img src="assets/bonds.png" alt="無記名債券" onerror="this.style.display='none'">
-              <i class="fas fa-file-invoice-dollar fallback-icon"></i>
             </div>
             <span class="p-card-title">無記名債券</span>
           </div>
@@ -96,7 +93,6 @@
           <div class="primary-card active" onclick="selectPrimary('pink_diamond', this)" id="default-primary">
             <div class="p-card-image">
               <img src="assets/diamond.png" alt="粉鑽" onerror="this.style.display='none'">
-              <i class="far fa-gem fallback-icon"></i>
             </div>
             <span class="p-card-title">粉鑽</span>
           </div>
@@ -104,7 +100,6 @@
           <div class="primary-card" onclick="selectPrimary('panther_statue', this)">
             <div class="p-card-image">
               <img src="assets/panther.png" alt="美洲豹雕像" onerror="this.style.display='none'">
-              <i class="fas fa-cat fallback-icon"></i>
             </div>
             <span class="p-card-title">美洲豹雕像</span>
           </div>
@@ -251,9 +246,9 @@
     </div>
   </div>
 
-  <script src="js/loader.js?nocache=1015"></script>
-  <script src="js/settings.js?nocache=1015"></script>
-  <script src="js/logic.js?nocache=1015"></script>
+  <script src="js/loader.js?nocache=1016"></script>
+  <script src="js/settings.js?nocache=1016"></script>
+  <script src="js/logic.js?nocache=1016"></script>
   
   <script>
     function updateInput(id, change) {
