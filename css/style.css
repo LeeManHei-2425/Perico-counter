@@ -117,7 +117,7 @@ select, input[type="number"] {
 select:focus, input:focus { border-color: var(--accent); outline: none; }
 input.error-input { border-color: var(--danger) !important; background-color: rgba(255, 82, 82, 0.1); }
 
-/* --- 主要目標 (Primary Target) 修復 --- */
+/* --- 主要目標 (Primary Target) 修復與優化 --- */
 .primary-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
@@ -128,23 +128,45 @@ input.error-input { border-color: var(--danger) !important; background-color: rg
   background: #252525;
   border: 2px solid transparent;
   border-radius: 8px;
-  padding: 10px;
-  cursor: pointer;
-  text-align: center;
-  transition: all 0.2s;
+  
+  /* 關鍵修改：使用 flex column 並預留上方空間 */
   display: flex;
   flex-direction: column;
   align-items: center;
-  overflow: hidden; /* 防止內容溢出 */
+  
+  padding: 25px 5px 10px 5px; /* 上方 padding 增加到 25px，給標籤空間 */
+  
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+  position: relative; /* 讓絕對定位的標籤可以參考這個位置 */
+  overflow: hidden; 
 }
 
 .primary-card:hover { transform: translateY(-3px); background: #303030; }
+
+/* 當被選中時的樣式 */
 .primary-card.active {
   border-color: var(--accent);
   background: rgba(0, 230, 118, 0.05);
   box-shadow: 0 0 15px rgba(0, 230, 118, 0.15);
 }
+
 .primary-card.active .p-card-title { color: var(--accent); font-weight: bold; }
+
+/* 使用 CSS 偽元素製作「已選擇」標籤 (Icon/Label) */
+.primary-card.active::after {
+  content: '✓ 選擇'; /* 或者 '主要' */
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: var(--accent);
+  color: #000;
+  font-size: 10px;
+  padding: 2px 8px;
+  border-bottom-left-radius: 8px;
+  font-weight: bold;
+}
 
 .p-card-image {
   height: 60px;
@@ -154,13 +176,14 @@ input.error-input { border-color: var(--danger) !important; background-color: rg
   justify-content: center;
   margin-bottom: 8px;
   position: relative;
-  overflow: hidden; /* 關鍵：裁切溢出的圖片 */
+  /* 移除 overflow hidden，避免太大的圖片被切得太醜，或者保留皆可 */
+  overflow: hidden; 
 }
 
 .p-card-image img {
   max-width: 90%;
   max-height: 100%;
-  object-fit: contain; /* 保持比例 */
+  object-fit: contain; 
   display: block;
 }
 

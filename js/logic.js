@@ -115,8 +115,7 @@ const Counter = {
     const withinCooldownSecondaryBonus = Settings.isWithinCooldown ?
       Counter.targetsData.targets.primary.find(({ name }) => name === Settings.primaryTarget).bonus_multiplier : 1;
 
-    // 分紅警告計算 (修正：如果只有1人，不計算其他人的分紅)
-    // 這裡確保如果 UI 隱藏了隊員，計算時也不會加進去
+    // 分紅警告計算
     const totalCut = Settings.leaderCut + 
                     (players > 1 ? Settings.member1Cut : 0) + 
                     (players > 2 ? Settings.member2Cut : 0) + 
@@ -284,18 +283,27 @@ const Counter = {
 
     SettingProxy.addListener(Settings, 'gold weed cash cocaine paintings primaryTarget isHardMode isWithinCooldown goldAlone leaderCut member1Cut member2Cut member3Cut amountOfPlayers', Counter.getLoot);
     
-    // 監聽玩家人數改變，動態隱藏/顯示分紅欄位
+    // --- 關鍵修改：使用 ID 監聽玩家人數改變 ---
     SettingProxy.addListener(Settings, 'amountOfPlayers', () => {
       document.querySelector('#goldAlone').parentElement.classList.toggle('hidden', Settings.amountOfPlayers !== 1);
       
-      const rows = document.querySelectorAll('.cuts .cut-row');
-      // 這裡對應 index.html 結構: 
-      // rows[0]=Leader, rows[1]=Member1, rows[2]=Member2, rows[3]=Member3
-      
-      // 當人數 < 2 (即 1人) 時，隱藏 Member 1 (rows[1])
-      if(rows[1]) rows[1].classList.toggle('hidden', Settings.amountOfPlayers < 2);
-      if(rows[2]) rows[2].classList.toggle('hidden', Settings.amountOfPlayers < 3);
-      if(rows[3]) rows[3].classList.toggle('hidden', Settings.amountOfPlayers < 4);
+      // 控制 隊員 1 (當人數 < 2 時隱藏)
+      const p2Wrapper = document.getElementById('cut-p2-wrapper');
+      if (p2Wrapper) {
+          p2Wrapper.classList.toggle('hidden', Settings.amountOfPlayers < 2);
+      }
+
+      // 控制 隊員 2 (當人數 < 3 時隱藏)
+      const p3Wrapper = document.getElementById('cut-p3-wrapper');
+      if (p3Wrapper) {
+          p3Wrapper.classList.toggle('hidden', Settings.amountOfPlayers < 3);
+      }
+
+      // 控制 隊員 3 (當人數 < 4 時隱藏)
+      const p4Wrapper = document.getElementById('cut-p4-wrapper');
+      if (p4Wrapper) {
+          p4Wrapper.classList.toggle('hidden', Settings.amountOfPlayers < 4);
+      }
 
       // 單人時自動將隊長設為 100%
       if (Settings.amountOfPlayers === 1) {

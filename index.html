@@ -5,11 +5,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cayo Perico 搶劫計算機</title>
-  <link rel="stylesheet" href="css/style.css?nocache=1016" />
+  <link rel="stylesheet" href="css/style.css?nocache=1017" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   
   <script>
-    const nocache = 1016;
+    const nocache = 1017;
   </script>
 </head>
 
@@ -19,7 +19,7 @@
     <div class="input-section">
       <header>
         <h1><i class="fas fa-terminal"></i> Cayo Perico 計算機</h1>
-        <p class="subtitle">佩里克島搶劫戰利品計算 | v2.2 Clean UI</p>
+        <p class="subtitle">佩里克島搶劫戰利品計算 | v2.3 Fixed</p>
       </header>
 
       <section class="panel settings-panel slide-in">
@@ -207,7 +207,7 @@
               <input type="number" id="leaderCut" value="85" step="5" min="0" max="100">
               <span></span>
             </div>
-            <div class="cut-row">
+            <div class="cut-row" id="cut-p2-wrapper">
               <label>隊員 1</label>
               <input type="number" id="member1Cut" value="15" step="5" min="0" max="100">
               <span></span>
@@ -246,9 +246,9 @@
     </div>
   </div>
 
-  <script src="js/loader.js?nocache=1016"></script>
-  <script src="js/settings.js?nocache=1016"></script>
-  <script src="js/logic.js?nocache=1016"></script>
+  <script src="js/loader.js?nocache=1017"></script>
+  <script src="js/settings.js?nocache=1017"></script>
+  <script src="js/logic.js?nocache=1017"></script>
   
   <script>
     function updateInput(id, change) {
