@@ -5,11 +5,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cayo Perico 搶劫計算機</title>
-  <link rel="stylesheet" href="css/style.css?nocache=1014" />
+  <link rel="stylesheet" href="css/style.css?nocache=1015" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   
   <script>
-    const nocache = 1014;
+    const nocache = 1015;
   </script>
 </head>
 
@@ -19,7 +19,7 @@
     <div class="input-section">
       <header>
         <h1><i class="fas fa-terminal"></i> Cayo Perico 計算機</h1>
-        <p class="subtitle">佩里克島搶劫戰利品計算 | v2.0 AI Optimized</p>
+        <p class="subtitle">佩里克島搶劫戰利品計算 | v2.1 Fix</p>
       </header>
 
       <section class="panel settings-panel slide-in">
@@ -112,7 +112,7 @@
       </section>
 
       <section class="panel loot-panel slide-in" style="animation-delay: 0.2s;">
-        <div class="panel-header">
+        <div class="panel-header-row">
            <h2><i class="fas fa-eye"></i> 偵察到的次要目標 (數量)</h2>
            <button id="optimize-btn" class="btn-optimize"><i class="fas fa-magic"></i> 一鍵計算最佳拿法</button>
         </div>
@@ -188,11 +188,10 @@
           <h3>預估最高收益</h3>
           <div id="max-loot-value" class="highlight-value">0</div>
           
-          <div id="taken-loot-display" class="taken-loot-list hidden">
-            </div>
+          <div id="taken-loot-display" class="taken-loot-list hidden"></div>
 
           <div class="bag-status">
-            <span>背包容量: <span id="bags_fill">0</span> / <span id="max_bags_display">2</span></span>
+            <span>背包容量: <span id="bags_fill">0.00</span> / <span id="max_bags_display">2</span></span>
             <div class="progress-bar-bg"><div class="progress-bar-fill" id="bag-bar" style="width: 0%"></div></div>
           </div>
         </div>
@@ -252,18 +251,16 @@
     </div>
   </div>
 
-  <script src="js/loader.js?nocache=1014"></script>
-  <script src="js/settings.js?nocache=1014"></script>
-  <script src="js/logic.js?nocache=1014"></script>
+  <script src="js/loader.js?nocache=1015"></script>
+  <script src="js/settings.js?nocache=1015"></script>
+  <script src="js/logic.js?nocache=1015"></script>
   
   <script>
-    // 輔助與 UI 初始化
     function updateInput(id, change) {
       const input = document.getElementById(id);
       let newVal = parseInt(input.value) + change;
       if (newVal >= input.min && newVal <= input.max) {
         input.value = newVal;
-        // 觸發自定義事件，讓 logic.js 捕捉
         input.dispatchEvent(new Event('change'));
       }
     }
@@ -289,7 +286,6 @@
         }, 200);
     });
 
-    // 綁定優化按鈕
     document.getElementById('optimize-btn').addEventListener('click', () => {
         if(typeof Counter !== 'undefined' && Counter.optimize) {
             Counter.optimize();

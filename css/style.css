@@ -32,14 +32,8 @@ body {
   to { opacity: 1; transform: translateY(0); }
 }
 
-.fade-in {
-  animation: fadeIn 0.8s ease-out forwards;
-}
-
-.slide-in {
-  opacity: 0; /* 預設隱藏，等待動畫 */
-  animation: slideIn 0.6s ease-out forwards;
-}
+.fade-in { animation: fadeIn 0.8s ease-out forwards; }
+.slide-in { opacity: 0; animation: slideIn 0.6s ease-out forwards; }
 
 .app-container {
   display: flex;
@@ -77,13 +71,15 @@ header .subtitle {
 }
 .panel:hover { border-color: #444; }
 
-.panel-header {
+.panel-header-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid #333;
-    padding-bottom: 10px;
+    padding-bottom: 15px;
     margin-bottom: 15px;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 .panel h2 {
   font-size: 1.1rem;
@@ -119,12 +115,7 @@ select, input[type="number"] {
   transition: all 0.2s;
 }
 select:focus, input:focus { border-color: var(--accent); outline: none; }
-
-/* 錯誤狀態輸入框 */
-input.error-input {
-    border-color: var(--danger) !important;
-    background-color: rgba(255, 82, 82, 0.1);
-}
+input.error-input { border-color: var(--danger) !important; background-color: rgba(255, 82, 82, 0.1); }
 
 /* --- 主要目標 (Primary Target) 修復 --- */
 .primary-grid {
@@ -143,7 +134,8 @@ input.error-input {
   transition: all 0.2s;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  align-items: center;
+  overflow: hidden; /* 防止內容溢出 */
 }
 
 .primary-card:hover { transform: translateY(-3px); background: #303030; }
@@ -160,32 +152,28 @@ input.error-input {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 5px;
+  margin-bottom: 8px;
   position: relative;
+  overflow: hidden; /* 關鍵：裁切溢出的圖片 */
 }
 
 .p-card-image img {
-  max-width: 100%;
+  max-width: 90%;
   max-height: 100%;
-  object-fit: contain;
-  display: block; /* 確保圖片是區塊元素 */
+  object-fit: contain; /* 保持比例 */
+  display: block;
 }
 
-/* Fallback Icon 樣式 */
 .fallback-icon {
     font-size: 2.5rem;
     color: #444;
     display: none;
     position: absolute;
-    top: 50%;
-    left: 50%;
+    top: 50%; left: 50%;
     transform: translate(-50%, -50%);
 }
-/* 當圖片被隱藏時 (JS onerror) 顯示圖示 */
 .p-card-image img[style*="display: none"] + .fallback-icon,
-.p-card-image img[style*="display:none"] + .fallback-icon {
-  display: block;
-}
+.p-card-image img[style*="display:none"] + .fallback-icon { display: block; }
 
 .p-card-title { font-size: 0.85rem; color: #ccc; }
 
@@ -194,7 +182,7 @@ input.error-input {
     background: linear-gradient(135deg, var(--accent) 0%, #00b359 100%);
     color: #000;
     border: none;
-    padding: 8px 15px;
+    padding: 8px 20px;
     border-radius: 20px;
     font-weight: bold;
     cursor: pointer;
@@ -204,12 +192,12 @@ input.error-input {
     display: flex;
     align-items: center;
     gap: 5px;
+    white-space: nowrap;
 }
 .btn-optimize:hover {
     transform: scale(1.05);
     box-shadow: 0 6px 10px rgba(0,230,118, 0.4);
 }
-.btn-optimize:active { transform: scale(0.95); }
 
 .loot-grid {
   display: grid;
@@ -227,7 +215,7 @@ input.error-input {
 }
 .loot-card:hover { transform: translateY(-2px); border-color: #444; }
 
-.card-image img { max-height: 50px; }
+.card-image img { max-height: 50px; max-width: 100%; }
 .card-title { font-weight: bold; font-size: 0.9rem; color: #ddd; margin-top: 5px; display: block;}
 
 .counter-control {
@@ -245,6 +233,7 @@ input.error-input {
     font-size: 1.3rem;
     color: white;
     padding: 0;
+    text-align: center;
 }
 .btn-minus, .btn-plus {
   width: 30px; height: 30px;
@@ -289,24 +278,26 @@ input.error-input {
     font-size: 0.9rem;
     color: #ddd;
     text-align: left;
+    border-left: 3px solid var(--accent);
 }
 .taken-item {
     display: flex;
     justify-content: space-between;
     margin-bottom: 4px;
+    border-bottom: 1px solid #333;
+    padding-bottom: 2px;
 }
-.taken-item span:first-child { color: var(--accent); }
+.taken-item:last-child { border-bottom: none; }
+.taken-item span:first-child { color: var(--accent); font-weight: bold; }
+.taken-item span:last-child { color: #aaa; }
 
-/* 分紅警告 */
 .warning-text {
     color: var(--danger);
     font-size: 0.8rem;
     animation: fadeIn 0.3s;
 }
 
-.cuts .cut-row {
-  display: flex; align-items: center; margin-bottom: 10px;
-}
+.cuts .cut-row { display: flex; align-items: center; margin-bottom: 10px; }
 .cuts label { width: 60px; font-size: 0.9rem; color: #ccc; }
 .cuts input { width: 70px; margin-right: 10px; text-align: right; }
 
@@ -320,9 +311,10 @@ input.error-input {
   transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* RWD */
 @media (max-width: 768px) {
   .app-container { flex-direction: column; padding: 10px; }
   .input-section, .result-section { width: 100%; }
+  .panel-header-row { flex-direction: column; align-items: flex-start; }
+  .btn-optimize { width: 100%; justify-content: center; }
 }
 .hidden { display: none !important; }
