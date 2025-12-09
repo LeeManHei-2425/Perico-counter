@@ -2,12 +2,12 @@
 :root {
   --bg-color: #121212;
   --card-bg: #1e1e1e;
-  --accent: #00e676; /* GTA 風格亮綠色 */
+  --accent: #00e676; 
   --accent-hover: #00c853;
   --text-main: #ffffff;
   --text-dim: #b0b0b0;
   --danger: #ff5252;
-  --card-border: #333;
+  --warning: #ffab40;
 }
 
 body {
@@ -18,6 +18,27 @@ body {
   padding: 0;
   display: flex;
   justify-content: center;
+  overflow-x: hidden;
+}
+
+/* --- 動畫效果 --- */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fadeIn 0.8s ease-out forwards;
+}
+
+.slide-in {
+  opacity: 0; /* 預設隱藏，等待動畫 */
+  animation: slideIn 0.6s ease-out forwards;
 }
 
 .app-container {
@@ -29,25 +50,15 @@ body {
   padding: 20px;
 }
 
-/* 左側面板 */
-.input-section {
-  flex: 2;
-  min-width: 320px;
-}
+/* 左側與右側配置 */
+.input-section { flex: 2; min-width: 320px; }
+.result-section { flex: 1; min-width: 280px; }
 
-/* 右側面板 */
-.result-section {
-  flex: 1;
-  min-width: 280px;
-}
-
-/* 標題 */
 header h1 {
   color: var(--accent);
   margin-bottom: 5px;
   text-transform: uppercase;
   letter-spacing: 2px;
-  font-size: 1.8rem;
 }
 header .subtitle {
   color: var(--text-dim);
@@ -55,21 +66,28 @@ header .subtitle {
   margin-bottom: 20px;
 }
 
-/* 通用面板樣式 */
 .panel {
   background: var(--card-bg);
   border-radius: 12px;
   padding: 20px;
   margin-bottom: 20px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
   border: 1px solid #2a2a2a;
+  transition: border-color 0.3s;
 }
+.panel:hover { border-color: #444; }
 
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #333;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
 .panel h2 {
   font-size: 1.1rem;
-  border-bottom: 1px solid #333;
-  padding-bottom: 10px;
-  margin-top: 0;
+  margin: 0;
   color: var(--text-dim);
   display: flex;
   align-items: center;
@@ -98,14 +116,17 @@ select, input[type="number"] {
   padding: 10px;
   border-radius: 6px;
   font-size: 1rem;
-  transition: border-color 0.2s;
+  transition: all 0.2s;
 }
-select:focus, input:focus {
-  border-color: var(--accent);
-  outline: none;
+select:focus, input:focus { border-color: var(--accent); outline: none; }
+
+/* 錯誤狀態輸入框 */
+input.error-input {
+    border-color: var(--danger) !important;
+    background-color: rgba(255, 82, 82, 0.1);
 }
 
-/* --- 主要目標 (Primary Target) 樣式 --- */
+/* --- 主要目標 (Primary Target) 修復 --- */
 .primary-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
@@ -120,58 +141,76 @@ select:focus, input:focus {
   cursor: pointer;
   text-align: center;
   transition: all 0.2s;
-  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
-.primary-card:hover {
-  background: #303030;
-  transform: translateY(-2px);
-}
-
-/* 選中狀態 */
+.primary-card:hover { transform: translateY(-3px); background: #303030; }
 .primary-card.active {
   border-color: var(--accent);
-  background: #2a3a2a;
-  box-shadow: 0 0 10px rgba(0, 230, 118, 0.1);
+  background: rgba(0, 230, 118, 0.05);
+  box-shadow: 0 0 15px rgba(0, 230, 118, 0.15);
 }
-
-.primary-card.active .p-card-title {
-  color: var(--accent);
-  font-weight: bold;
-}
+.primary-card.active .p-card-title { color: var(--accent); font-weight: bold; }
 
 .p-card-image {
   height: 60px;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 5px;
+  position: relative;
 }
 
 .p-card-image img {
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
+  display: block; /* 確保圖片是區塊元素 */
 }
 
-/* 備用圖示 (當圖片不存在時顯示) */
+/* Fallback Icon 樣式 */
 .fallback-icon {
-  font-size: 2rem;
-  color: #555;
-  display: none; 
+    font-size: 2.5rem;
+    color: #444;
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
-/* 當 img 隱藏時 (display:none) 顯示 icon */
-.p-card-image img[style*="display: none"] + .fallback-icon {
+/* 當圖片被隱藏時 (JS onerror) 顯示圖示 */
+.p-card-image img[style*="display: none"] + .fallback-icon,
+.p-card-image img[style*="display:none"] + .fallback-icon {
   display: block;
 }
 
-.p-card-title {
-  font-size: 0.85rem;
-  color: #ccc;
-  display: block;
-}
+.p-card-title { font-size: 0.85rem; color: #ccc; }
 
-/* --- 次要目標 (Loot) 卡片樣式 --- */
+/* --- 優化按鈕與次要目標 --- */
+.btn-optimize {
+    background: linear-gradient(135deg, var(--accent) 0%, #00b359 100%);
+    color: #000;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 0.9rem;
+    box-shadow: 0 4px 6px rgba(0,230,118, 0.3);
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.btn-optimize:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 10px rgba(0,230,118, 0.4);
+}
+.btn-optimize:active { transform: scale(0.95); }
+
 .loot-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
@@ -183,36 +222,14 @@ select:focus, input:focus {
   border-radius: 10px;
   padding: 15px;
   text-align: center;
-  transition: transform 0.2s;
   border: 1px solid transparent;
+  transition: all 0.2s;
 }
+.loot-card:hover { transform: translateY(-2px); border-color: #444; }
 
-.loot-card:hover {
-  transform: translateY(-2px);
-  border-color: #444;
-}
+.card-image img { max-height: 50px; }
+.card-title { font-weight: bold; font-size: 0.9rem; color: #ddd; margin-top: 5px; display: block;}
 
-.card-image {
-  height: 70px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.card-image img {
-  max-height: 50px;
-  max-width: 100%;
-}
-
-.card-title {
-  font-weight: bold;
-  font-size: 0.9rem;
-  color: #ddd;
-}
-
-/* 計數器按鈕 */
 .counter-control {
   display: flex;
   align-items: center;
@@ -220,130 +237,92 @@ select:focus, input:focus {
   gap: 5px;
   margin-top: 10px;
 }
-
 .counter-control input {
-  width: 45px;
-  text-align: center;
-  padding: 5px;
-  background: transparent;
-  border: none;
-  font-weight: bold;
-  font-size: 1.3rem;
-  color: white;
+    width: 45px;
+    background: transparent;
+    border: none;
+    font-weight: bold;
+    font-size: 1.3rem;
+    color: white;
+    padding: 0;
 }
-
 .btn-minus, .btn-plus {
-  width: 32px;
-  height: 32px;
+  width: 30px; height: 30px;
   border-radius: 50%;
   border: none;
-  background: #444;
-  color: white;
+  background: #333; color: white;
   cursor: pointer;
-  font-size: 1.2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.2s;
+  display: flex; align-items: center; justify-content: center;
 }
-
 .btn-plus { background: var(--accent); color: black; }
-.btn-minus:hover { background: #555; }
-.btn-plus:hover { background: var(--accent-hover); }
+.btn-minus:hover { background: #444; }
 
-/* 右側結果卡片 */
-.result-card {
-  background: var(--card-bg);
-  border-radius: 12px;
-  padding: 20px;
-  margin-bottom: 15px;
-  border: 1px solid #2a2a2a;
+.hint-text {
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 15px;
+    text-align: right;
+    font-style: italic;
 }
 
+/* --- 結果面板 --- */
 .main-profit {
   text-align: center;
   background: linear-gradient(135deg, #1e1e1e 0%, #252525 100%);
   border: 1px solid var(--accent);
-  box-shadow: 0 0 15px rgba(0, 230, 118, 0.1);
 }
-
 .highlight-value {
-  font-size: 2.8rem;
+  font-size: 2.5rem;
   color: var(--accent);
   font-weight: bold;
   margin: 15px 0;
-  text-shadow: 0 0 10px rgba(0, 230, 118, 0.3);
+  text-shadow: 0 0 15px rgba(0, 230, 118, 0.2);
 }
-.highlight-value::before { content: '$'; font-size: 1.5rem; vertical-align: super; color: #fff; opacity: 0.5; }
+.highlight-value::before { content: '$'; font-size: 1.5rem; vertical-align: super; opacity: 0.7; }
 
-.detail-row {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
-  font-size: 0.95rem;
-  padding-bottom: 5px;
-  border-bottom: 1px solid #333;
+/* 自動計算結果顯示 */
+.taken-loot-list {
+    margin: 10px 0;
+    padding: 10px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 6px;
+    font-size: 0.9rem;
+    color: #ddd;
+    text-align: left;
 }
-.detail-row:last-child { border-bottom: none; }
+.taken-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 4px;
+}
+.taken-item span:first-child { color: var(--accent); }
 
-.detail-row.minus span:last-child { color: var(--danger); }
-.detail-row.minus span:last-child::before { content: '- $'; }
-.detail-row span:last-child::before { content: '$'; }
+/* 分紅警告 */
+.warning-text {
+    color: var(--danger);
+    font-size: 0.8rem;
+    animation: fadeIn 0.3s;
+}
 
-/* 分紅區塊 */
 .cuts .cut-row {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
+  display: flex; align-items: center; margin-bottom: 10px;
 }
 .cuts label { width: 60px; font-size: 0.9rem; color: #ccc; }
 .cuts input { width: 70px; margin-right: 10px; text-align: right; }
-.cuts span { color: var(--text-dim); font-size: 0.85rem; }
-.cuts span::before { content: "≈ $"; }
 
-/* 按鈕群組 */
-.action-buttons {
-  display: flex;
-  gap: 10px;
-}
-.btn-secondary {
-  flex: 1;
-  padding: 12px;
-  background: #333;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-family: inherit;
-  font-weight: bold;
-  transition: background 0.2s;
-}
-.btn-secondary:hover { background: #444; }
-
-/* 進度條 */
-.bag-status {
-    margin-top: 15px;
-    font-size: 0.9rem;
-    color: var(--text-dim);
-}
+.bag-status { margin-top: 15px; font-size: 0.9rem; color: var(--text-dim); }
 .progress-bar-bg {
-  width: 100%;
-  height: 8px;
-  background: #333;
-  border-radius: 4px;
-  margin-top: 8px;
-  overflow: hidden;
+  width: 100%; height: 8px; background: #333;
+  border-radius: 4px; margin-top: 8px; overflow: hidden;
 }
 .progress-bar-fill {
-  height: 100%;
-  background: var(--accent);
-  transition: width 0.3s ease;
+  height: 100%; background: var(--accent);
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* 響應式調整 */
+/* RWD */
 @media (max-width: 768px) {
   .app-container { flex-direction: column; padding: 10px; }
   .input-section, .result-section { width: 100%; }
 }
-
 .hidden { display: none !important; }
